@@ -42,4 +42,19 @@ router.get("/me", authenticateJwt, async (req, res) => {
   }
 });
 
+router.patch("/username", authenticateJwt, async (req, res) => {
+  try {
+    const userId = req.headers.userId;
+    const newUsername: string = req.body.username;
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { username: newUsername },
+      { new: true }
+    );
+    res.json(updatedUser);
+  } catch {
+    res.status(403).json({ message: "User does not exists" });
+  }
+});
+
 export default router;

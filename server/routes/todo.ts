@@ -33,6 +33,32 @@ router.get("/todos", authenticateJwt, async (req, res) => {
   }
 });
 
+router.get("/todos/:todoId", authenticateJwt, async (req, res) => {
+  try {
+    const { todoId } = req.params;
+    const todo = await Todo.findById(todoId);
+
+    if (todo) {
+      res.json({ todo });
+    } else {
+      res.json({ message: "Todo does not exist." });
+    }
+  } catch {
+    res.status(404).json("Todo does not exist");
+  }
+});
+
+router.put("/todos/:todoId", authenticateJwt, async (req, res) => {
+  try {
+    const { todoId } = req.params;
+    const updatedTodo: TodoInput = req.body;
+    await Todo.findByIdAndUpdate(todoId, updatedTodo);
+    res.json({ message: "Todo updated successfully." });
+  } catch {
+    res.status(404).json("Todo does not exist");
+  }
+});
+
 router.patch("/todos/:todoId/done", authenticateJwt, async (req, res) => {
   try {
     const { todoId } = req.params;
@@ -51,6 +77,16 @@ router.patch("/todos/:todoId/done", authenticateJwt, async (req, res) => {
     }
   } catch {
     res.status(500).json({ error: "Failed to update todo" });
+  }
+});
+
+router.delete("/todos/:todoId", authenticateJwt, async (req, res) => {
+  try {
+    const { todoId } = req.params;
+    await Todo.findByIdAndDelete(todoId);
+    res.json({ message: "Todo deleted successfully." });
+  } catch {
+    res.status(404).json("Todo does not exist");
   }
 });
 
