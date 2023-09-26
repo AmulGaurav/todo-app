@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 
 type SignupResponse = {
   message: string;
@@ -13,17 +12,18 @@ const Signup = () => {
   const navigate = useNavigate();
 
   const handleSignup = async () => {
-    const response = await axios.post("http://localhost:3000/auth/signup", {
-      username,
-      password,
+    const response = await fetch("http://localhost:3000/auth/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
     });
 
-    const data: SignupResponse = response.data;
+    const data: SignupResponse = await response.json();
     if (data.token) {
       localStorage.setItem("token", data.token);
       navigate("/todos");
     } else {
-      alert("Error while signing up");
+      alert(data.message);
     }
   };
 

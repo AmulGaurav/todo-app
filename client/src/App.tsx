@@ -6,12 +6,14 @@ import TodoList from "./Components/TodoList";
 import { useNavigate } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 import { authState } from "./store/authState.ts";
+import DarkMode from "./Components/DarkMode.tsx";
 import axios from "axios";
 
 function App() {
   return (
     <Router>
       <InitState />
+      <DarkMode />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />

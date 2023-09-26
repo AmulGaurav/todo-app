@@ -192,8 +192,20 @@ const TodoList = () => {
               </div>
             ) : (
               <div>
-                <h3>{todo.title}</h3>
-                <p>{todo.description}</p>
+                <h3
+                  style={{
+                    marginBottom: "-10px",
+                  }}
+                >
+                  {todo.title}
+                </h3>
+                <p
+                  style={{
+                    marginBottom: "-0.5px",
+                  }}
+                >
+                  {todo.description}
+                </p>
                 <button disabled={todo.done} onClick={() => markDone(todo._id)}>
                   {todo.done ? "Done" : "Mark as Done"}
                 </button>
