@@ -13,9 +13,8 @@ interface TodoInput {
 router.post("/todos", authenticateJwt, async (req, res) => {
   try {
     const { title, description }: TodoInput = req.body;
-    const done = false;
     const userId = req.headers.userId;
-    const newTodo = new Todo({ title, description, done, userId });
+    const newTodo = new Todo({ title, description, done: false, userId });
     const savedTodo = await newTodo.save();
     res.status(201).json(savedTodo);
   } catch {
@@ -30,21 +29,6 @@ router.get("/todos", authenticateJwt, async (req, res) => {
     res.json(todos);
   } catch {
     res.status(500).json({ error: "Failed to retrieve todos" });
-  }
-});
-
-router.get("/todos/:todoId", authenticateJwt, async (req, res) => {
-  try {
-    const { todoId } = req.params;
-    const todo = await Todo.findById(todoId);
-
-    if (todo) {
-      res.json({ todo });
-    } else {
-      res.json({ message: "Todo does not exist." });
-    }
-  } catch {
-    res.status(404).json("Todo does not exist");
   }
 });
 
