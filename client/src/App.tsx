@@ -34,7 +34,8 @@ function InitState() {
       const response = await axios.get("http://localhost:3000/auth/me", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      const data = await response.data;
+
+      const data = response.data;
       if (data.username) {
         setAuth({ token: data.token, username: data.username });
         navigate("/todos");

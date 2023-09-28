@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import axios from "axios";
 
 type SigninResponse = {
   message: string;
@@ -9,20 +10,20 @@ type SigninResponse = {
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
 
   const handleLogin = async () => {
-    const response = await fetch("http://localhost:3000/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password }),
-    });
+    try {
+      const response = await axios.post("http://localhost:3000/auth/login", {
+        username,
+        password,
+      });
 
-    const data: SigninResponse = await response.json();
-    if (data.token) {
-      localStorage.setItem("token", data.token);
-      navigate("/todos");
-    } else {
+      const data: SigninResponse = response.data;
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+        window.location.href = "/todos";
+      }
+    } catch (e) {
       alert("invalid credentials");
     }
   };
