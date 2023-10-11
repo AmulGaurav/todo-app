@@ -35,6 +35,10 @@ input::placeholder {
   opacity: 0.5;
 }
 
+.todo {
+  border-color: var(--border-color);
+}
+
 /* Custom Dark Mode Toggle Element */
 .toggle-theme-wrapper {
   display: flex;

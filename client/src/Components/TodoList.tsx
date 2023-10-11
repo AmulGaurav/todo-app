@@ -3,6 +3,8 @@ import { authState } from "../store/authState.ts";
 import { useRecoilValue } from "recoil";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { BASE_URL } from "../config.ts";
+import { Typography } from "@mui/material";
 
 interface Todo {
   _id: string;
@@ -23,7 +25,7 @@ const TodoList = () => {
   const navigate = useNavigate();
 
   const getTodos = async () => {
-    const response = await axios.get("http://localhost:3000/todo/todos", {
+    const response = await axios.get(`${BASE_URL}/todo/todos`, {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     });
 
@@ -37,7 +39,7 @@ const TodoList = () => {
 
   const addTodo = async () => {
     const response = await axios.post(
-      "http://localhost:3000/todo/todos",
+      `${BASE_URL}/todo/todos`,
       {
         title,
         description,
@@ -56,7 +58,7 @@ const TodoList = () => {
 
   const markDone = async (id: string) => {
     const response = await axios.patch(
-      `http://localhost:3000/todo/todos/${id}/done`,
+      `${BASE_URL}/todo/todos/${id}/done`,
       {},
       {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
@@ -78,7 +80,7 @@ const TodoList = () => {
   const handleUpdateSave = async () => {
     // Send a request to update the todo on the server with newTitle and newDescription
     await axios.put(
-      `http://localhost:3000/todo/todos/${updatingTodo?._id}`,
+      `${BASE_URL}/todo/todos/${updatingTodo?._id}`,
       {
         title: newTitle,
         description: newDescription,
@@ -97,12 +99,9 @@ const TodoList = () => {
 
   const deleteTodo = async (id: string) => {
     if (confirm("Deleting? Are you sure? 🎩")) {
-      const response = await axios.delete(
-        `http://localhost:3000/todo/todos/${id}`,
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
-      );
+      const response = await axios.delete(`${BASE_URL}/todo/todos/${id}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
 
       const data = response.data;
       alert(data.message);
@@ -127,101 +126,177 @@ const TodoList = () => {
         </div>
       </div>
       <div>
-        <h2>Todo List</h2>
-        <input
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="Title"
-        />
-        <input
-          type="text"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          placeholder="Description"
-        />
-        <button onClick={addTodo}>Add Todo</button>
-      </div>
-      <div>
-        {todos.map((todo) => (
-          <div
+        <div
+          style={{
+            textAlign: "center",
+          }}
+        >
+          <Typography
+            variant="h4"
             style={{
-              border: "1px solid white",
-              margin: "20px 0px",
+              margin: "8px 0px 12px 0px",
             }}
-            key={todo._id}
           >
-            {isUpdating && updatingTodo?._id === todo._id ? (
-              <div>
+            Todo List
+          </Typography>
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Title"
+          />
+          <input
+            type="text"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Description"
+          />
+          <button onClick={addTodo}>Add Todo</button>
+        </div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            flexWrap: "wrap",
+            marginTop: "15px",
+          }}
+        >
+          {todos.map((todo) => (
+            <div
+              className="todo"
+              style={{
+                width: "380px",
+                height: "200px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                border: "1px solid",
+                margin: "20px 20px",
+                textAlign: "center",
+                backgroundColor: todo.done ? "teal" : "",
+              }}
+              key={todo._id}
+            >
+              {isUpdating && updatingTodo?._id === todo._id ? (
                 <div>
-                  <label htmlFor="title">
-                    <strong>Title: </strong>
-                  </label>
-                  <input
-                    type="text"
-                    id="title"
-                    value={newTitle}
-                    onChange={(e) => setNewTitle(e.target.value)}
-                  />
-                </div>
-                <div>
-                  <label htmlFor="description">
-                    <strong>Description: </strong>
-                  </label>
-                  <input
-                    type="text"
-                    id="description"
-                    value={newDescription}
-                    onChange={(e) => setNewDescription(e.target.value)}
-                  />
-                </div>
-                <div>
-                  <button
+                  <div>
+                    <label htmlFor="title">
+                      <strong>Title: </strong>
+                    </label>
+                    <input
+                      type="text"
+                      id="title"
+                      value={newTitle}
+                      onChange={(e) => setNewTitle(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="description">
+                      <strong>Description: </strong>
+                    </label>
+                    <input
+                      type="text"
+                      id="description"
+                      value={newDescription}
+                      onChange={(e) => setNewDescription(e.target.value)}
+                    />
+                  </div>
+                  <div
                     style={{
-                      backgroundColor: "red",
-                    }}
-                    onClick={() => {
-                      setIsUpdating(false);
-                      setUpdatingTodo(null);
+                      marginTop: "15px",
+                      display: "flex",
+                      justifyContent: "space-evenly",
                     }}
                   >
-                    Cancel
-                  </button>
-                  <button onClick={handleUpdateSave}>Save</button>
+                    <button
+                      style={{
+                        padding: "4px 10px",
+                        backgroundColor: "red",
+                      }}
+                      onClick={() => {
+                        setIsUpdating(false);
+                        setUpdatingTodo(null);
+                      }}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      style={{
+                        padding: "4px 10px",
+                        backgroundColor: "green",
+                      }}
+                      onClick={handleUpdateSave}
+                    >
+                      Save
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ) : (
-              <div>
-                <h3
+              ) : (
+                <div
                   style={{
-                    marginBottom: "-10px",
+                    width: "250px",
                   }}
                 >
-                  {todo.title}
-                </h3>
-                <p
-                  style={{
-                    marginBottom: "-0.5px",
-                  }}
-                >
-                  {todo.description}
-                </p>
-                <button disabled={todo.done} onClick={() => markDone(todo._id)}>
-                  {todo.done ? "Done" : "Mark as Done"}
-                </button>
-                <br />
-                <button
-                  onClick={() => {
-                    handleUpdateClick(todo);
-                  }}
-                >
-                  Update
-                </button>
-                <button onClick={() => deleteTodo(todo._id)}>Delete</button>
-              </div>
-            )}
-          </div>
-        ))}
+                  <h3
+                    style={{
+                      marginBottom: "-10px",
+                    }}
+                  >
+                    {todo.title}
+                  </h3>
+                  <p
+                    style={{
+                      marginBottom: "8px",
+                    }}
+                  >
+                    {todo.description}
+                  </p>
+                  <button
+                    style={{
+                      fontSize: "14px",
+                      fontWeight: "bold",
+                      color: todo.done ? "#333" : "white",
+                      backgroundColor: todo.done ? "lightgreen" : "",
+                    }}
+                    disabled={todo.done}
+                    onClick={() => markDone(todo._id)}
+                  >
+                    {todo.done ? "Done" : "Mark as Done"}
+                  </button>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-evenly",
+                      textAlign: "center",
+                      marginTop: "15px",
+                    }}
+                  >
+                    <button
+                      style={{
+                        padding: "6px 12px",
+                        backgroundColor: "green",
+                      }}
+                      onClick={() => {
+                        handleUpdateClick(todo);
+                      }}
+                    >
+                      Update
+                    </button>
+                    <button
+                      style={{
+                        padding: "6px 12px",
+                        backgroundColor: "red",
+                      }}
+                      onClick={() => deleteTodo(todo._id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 import { authState } from "./store/authState.ts";
 import DarkMode from "./Components/DarkMode.tsx";
+import { BASE_URL } from "./config.ts";
 import axios from "axios";
 
 function App() {
@@ -31,7 +32,7 @@ function InitState() {
   const init = async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await axios.get("http://localhost:3000/auth/me", {
+      const response = await axios.get(`${BASE_URL}/auth/me`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

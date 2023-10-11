@@ -13,6 +13,6 @@
   -webkit-text-size-adjust: 100%;
 }
 
-/* input {
-  background-color: white;
-} */
+.todo:hover {
+  background-color: grey;
+}
