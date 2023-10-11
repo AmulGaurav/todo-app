@@ -1,3 +1,4 @@
+require("dotenv").config();
 import express from "express";
 const app = express();
 import mongoose from "mongoose";
@@ -15,7 +16,6 @@ app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
 });
 
-mongoose.connect(
-  "mongodb+srv://amulgaurav907:Bkm3vxaN80ucI0p3@cluster0.f2yryxv.mongodb.net/todos-db",
-  { dbName: "todos-db" }
-);
+const mongodbConnectionString: string = process.env.MONGODB_CLUSTER_URL!;
+
+mongoose.connect(mongodbConnectionString, { dbName: "todos-db" });

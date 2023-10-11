@@ -1,18 +1,24 @@
 import express from "express";
-import { authenticateJwt, SECRET } from "../middleware/index";
+import { authenticateJwt, SECRET } from "../middleware/";
 import { Todo } from "../db";
+import { z } from "zod";
 const router = express.Router();
 
-interface TodoInput {
-  _id: string;
-  title: string;
-  description: string;
-  done: boolean;
-}
+const todosInput = z.object({
+  title: z.string().min(1),
+  description: z.string().min(1),
+});
 
 router.post("/todos", authenticateJwt, async (req, res) => {
   try {
-    const { title, description }: TodoInput = req.body;
+    const parsedInput = todosInput.safeParse(req.body);
+    if (!parsedInput.success) {
+      return res.status(411).json({
+        error: parsedInput.error,
+      });
+    }
+
+    const { title, description } = parsedInput.data;
     const userId = req.headers.userId;
     const newTodo = new Todo({ title, description, done: false, userId });
     const savedTodo = await newTodo.save();
@@ -34,8 +40,15 @@ router.get("/todos", authenticateJwt, async (req, res) => {
 
 router.put("/todos/:todoId", authenticateJwt, async (req, res) => {
   try {
+    const parsedInput = todosInput.safeParse(req.body);
+    if (!parsedInput.success) {
+      return res.status(411).json({
+        error: parsedInput.error,
+      });
+    }
+
     const { todoId } = req.params;
-    const updatedTodo: TodoInput = req.body;
+    const updatedTodo = parsedInput.data;
     await Todo.findByIdAndUpdate(todoId, updatedTodo);
     res.json({ message: "Todo updated successfully." });
   } catch {

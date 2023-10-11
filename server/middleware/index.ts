@@ -1,6 +1,7 @@
+require("dotenv").config();
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-export const SECRET = "SECr3t"; // This should be in an environment variable in a real application
+export const SECRET: string = process.env.JWT_SECRET!;
 
 export const authenticateJwt = (
   req: Request,
